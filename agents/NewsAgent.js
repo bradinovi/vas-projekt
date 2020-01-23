@@ -1,11 +1,12 @@
 var eve = require('evejs');
 const config = require('../config.json')
+const news = require('../API/nyt-api')
 
-console.log("My url:" + config.confUrlNewsAgent)
+console.log("My url:" + config.NewsAgent.confURL)
 eve.system.init({
   transports: [{
     type: 'ws',
-    url: config.confUrlNewsAgent,
+    url: config.NewsAgent.confURL,
     localShortcut: true,
   }]
 });
@@ -13,23 +14,25 @@ eve.system.init({
 
 function NewsAgent(id) {
   eve.Agent.call(this, id);
+  this.extend('request');
   this.connect(eve.system.transports.getAll());
 }
 
 NewsAgent.prototype = Object.create(eve.Agent.prototype);
 NewsAgent.prototype.constructor = NewsAgent;
 
-NewsAgent.prototype.pozdrav = function (primatelj) {
-  this.send(primatelj, 'Bok ' + primatelj + '!');
-};
-
-NewsAgent.prototype.posalji = function (primatelj, poruka) {
-  this.send(primatelj, poruka);
-};
-
 NewsAgent.prototype.receive = function (posiljatelj, poruka) {
-  console.log(posiljatelj + ': ' + JSON.stringify(poruka));
+  console.log(poruka);
+  if (poruka.type == "bot-get news") {
+    return getNews(poruka.query);
+  }
 };
 
 
 var agent1 = new NewsAgent('newsAgent');
+
+var getNews = async (query) => {
+  var newsData = await news.getNews(query)
+  console.log(newsData[0])
+  return newsData;
+}

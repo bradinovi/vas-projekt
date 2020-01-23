@@ -1,0 +1,144 @@
+var eve = require('evejs');
+var schedule = require('node-schedule');
+const config = require('../config.json')
+const Telegraf = require('telegraf')
+const weather = require('../API/owm')
+const bottoken = config.BotAgent.token;
+const bot = new Telegraf(bottoken)
+const Telegram = require('telegraf/telegram')
+const telegram = new Telegram(bottoken, {
+  agent: null,
+  webhookReply: true
+})
+
+var fs = require('fs');
+let rawdata = fs.readFileSync('USERS.json');
+let USERS = JSON.parse(rawdata);
+process.on('SIGINT', function () {
+  console.log("Caught interrupt signal");
+  console.log(USERS);
+  fs.writeFile('USERS.json', JSON.stringify(USERS), 'utf8', () => {
+    process.exit();
+  });
+});
+
+console.log("My url:" + config.BotAgent.confURL)
+
+eve.system.init({
+  transports: [{
+    type: 'ws',
+    url: config.BotAgent.confURL,
+    localShortcut: true,
+  }]
+});
+
+const registerUser = (id) => {
+
+  USERS["ID" + id.toString()] = {
+    location: {
+      lat: 46.305744,
+      lon: 16.336607
+    }
+  }
+  console.log("User registered");
+}
+
+const onStart = (ctx) => {
+  registerUser(ctx.chat.id);
+  ctx.reply('Welcome!')
+}
+const onRegister = (ctx) => {
+  registerUser(ctx.chat.id);
+  ctx.reply('Registered');
+}
+const onHelp = (ctx) => ctx.reply('Send me a sticker');
+
+const onSticker = (ctx) => ctx.reply('👍');
+
+const onHi = (ctx) => ctx.reply('Hey there');
+
+const onLocation = (ctx) => {
+  registerUser(ctx.chat.id);
+  console.log(ctx.update.message.location)
+  USERS["ID" + ctx.chat.id] = {
+    location: {
+      lat: ctx.update.message.location.latitude,
+      lon: ctx.update.message.location.longitude
+    }
+  }
+  ctx.reply('Your location has been updated.')
+};
+
+const onWeather = (ctx) => {
+  registerUser(ctx.chat.id);
+  weather.getWeatherForLocation(
+    USERS["ID" + ctx.chat.id].location.lat,
+    USERS["ID" + ctx.chat.id].location.lon,
+  ).then(data => {
+    console.log(data);
+    ctx.reply(
+      `Weather ${data.name}
+      Temperature: ${data.temp}
+      ${data.desc}`)
+  })
+}
+
+const onNews = (ctx) => {
+  registerUser(ctx.chat.id);
+  console.log(config.TrendsAgent.URL);
+  agent.request(config.TrendsAgent.URL, { type: 'bot-get trends' }).then(function (reply) {
+    reply.forEach(article => {
+      agent.request(config.NewsAgent.URL, { type: 'bot-get news', query: article }).then(function (reply) {
+        console.log('reply: ' + reply[0]);
+        ctx.reply(reply[0].headline + " " + reply[0].url);
+      });
+    });
+  });
+};
+
+
+function setBotEvents() {
+  bot.start(onStart)
+  bot.help(onHelp)
+  bot.on('sticker', onSticker)
+  bot.hears('register', onRegister)
+  bot.hears('hi', onHi)
+  bot.hears('news', onNews)
+  bot.hears('weather', onWeather)
+  bot.on('location', onLocation)
+}
+
+// BotAgent START
+function BotAgent(id) {
+  eve.Agent.call(this, id);
+  this.extend('request');
+  this.connect(eve.system.transports.getAll());
+}
+
+BotAgent.prototype = Object.create(eve.Agent.prototype);
+BotAgent.prototype.constructor = BotAgent;
+
+BotAgent.prototype.receive = function (posiljatelj, poruka) {
+  console.log(posiljatelj + ': ' + JSON.stringify(poruka));
+};
+
+BotAgent.prototype.initBot = function () {
+  setBotEvents();
+  bot.launch()
+};
+
+
+
+// BotAgent END
+var agent = new BotAgent('botAgent');
+agent.initBot();
+//agent.getNews();
+
+
+var newsJob = schedule.scheduleJob({ hour: 19, minute: 57 }, function () {
+  console.log('Time for tea!');
+});
+
+var weatherJob = schedule.scheduleJob({ hour: 19, minute: 57 }, function () {
+  console.log('Time for tea!');
+});

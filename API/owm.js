@@ -37,7 +37,8 @@ const getWeatherForLocation = (lat, lon) => {
                     temp_min: body.main.temp_min,
                     temp_max: body.main.temp_max,
                     feels_like: body.main.feels_like,
-                    icon: 'http://openweathermap.org/img/wn/' + body.weather[0].icon + '.png'
+                    icon: 'http://openweathermap.org/img/wn/' + body.weather[0].icon + '.png',
+                    name: body.name
                 }
                 //sconsole.log(weatherData)
                 resolve(weatherData);

@@ -31,19 +31,27 @@ const getNytNews = (queryTerm) => {
             let articleData = [];
             res.on("end", () => {
                 body = JSON.parse(body);
-                articleData = [];
-                body.response.docs.forEach(a => {
-                    var multimedia = Object.assign({}, a.multimedia[0]);
-                    var mediaUrl = "";
-                    if (multimedia != undefined)
-                        mediaUrl = "https://static01.nyt.com/" + multimedia.url;
-                    articleData.push({
-                        headline: a.headline.main,
-                        summary: a.snippet,
-                        url: a.web_url,
-                        image: mediaUrl
-                    })
-                });
+                //console.log(body)
+
+                if (body.response != undefined) {
+                    if (body.response.docs != undefined) {
+                        body.response.docs.forEach(a => {
+                            var multimedia = Object.assign({}, a.multimedia[0]);
+                            var mediaUrl = "";
+                            if (multimedia != undefined)
+                                mediaUrl = "https://static01.nyt.com/" + multimedia.url;
+                            var article = {
+                                headline: a.headline.main,
+                                summary: a.snippet,
+                                url: a.web_url,
+                                image: mediaUrl
+                            }
+                            //console.log(article)
+                            articleData.push(article);
+                        });
+                    }
+                }
+                //console.log(articleData);
                 resolve(articleData);
             })
 
@@ -52,3 +60,5 @@ const getNytNews = (queryTerm) => {
 };
 
 exports.getNews = getNytNews;
+
+//getNytNews('trump').then(data => console.log(data[0]))

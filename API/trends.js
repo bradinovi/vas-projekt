@@ -26,9 +26,10 @@ const getGoogleTrends = () => {
                         result = JSON.parse(results);
                         let trends = [];
                         result.default.trendingSearchesDays[0].trendingSearches.forEach(search => {
-                            console.log(search.title);
+                            //console.log(search.title);
                             trends.push(search.title.query);
                         });
+
                         resolve(trends)
                     }
                 });
@@ -38,4 +39,4 @@ const getGoogleTrends = () => {
 exports.getGoogleTrends = getGoogleTrends;
 
 
-
+//getGoogleTrends().then(data => console.log())

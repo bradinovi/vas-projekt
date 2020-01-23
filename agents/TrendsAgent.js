@@ -1,12 +1,13 @@
 var eve = require('evejs');
 const config = require('../config.json')
+const trends = require('../API/trends')
 
-console.log("My url:" + config.confUrlTrendsAgent)
+console.log("My url:" + config.TrendsAgent.confURL)
 
 eve.system.init({
   transports: [{
     type: 'ws',
-    url: config.confUrlTrendsAgent,
+    url: config.TrendsAgent.confURL,
     localShortcut: true,
   }]
 });
@@ -14,24 +15,24 @@ eve.system.init({
 
 function TrendsAgent(id) {
   eve.Agent.call(this, id);
+  this.extend('request');
   this.connect(eve.system.transports.getAll());
 }
 
 TrendsAgent.prototype = Object.create(eve.Agent.prototype);
 TrendsAgent.prototype.constructor = TrendsAgent;
 
-TrendsAgent.prototype.pozdrav = function (primatelj) {
-  this.send(primatelj, 'Bok ' + primatelj + '!');
+TrendsAgent.prototype.receive = function (posiljatelj, poruka) {
+  console.log(poruka);
+  if (poruka.type == "bot-get trends") {
+    return getTrends();
+  }
 };
-
-TrendsAgent.prototype.posalji = function (primatelj, poruka) {
-  this.send(primatelj, poruka);
-};
-
-TrendsAgent.prototype.sendToNewsAgent = function () {
-  this.send(config.urlNewsAgent, "Bok News agent");
-};
-
 
 var agent1 = new TrendsAgent('trendsAgent');
-agent1.sendToNewsAgent();
+
+var getTrends = async () => {
+  var trendsData = await trends.getGoogleTrends()
+  console.log(trendsData)
+  return trendsData;
+}

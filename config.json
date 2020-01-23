@@ -1,8 +1,19 @@
 {
-    "confUrlTrendsAgent": "ws://127.0.0.1:3000/agents/:id",
-    "urlTrendsAgent": "ws://127.0.0.1:3000/agents/trendsAgent",
-    "confUrlNewsAgent": "ws://127.0.0.1:3001/agents/:id",
-    "urlNewsAgent": "ws://127.0.0.1:3001/agents/newsAgent",
-    "confUrlWeatherAgent": "ws://127.0.0.1:3002/agents/:id",
-    "urlWeatherAgent": "ws://127.0.0.1:3002/agents/weatherAgent"
+    "TrendsAgent": {
+        "confURL": "ws://127.0.0.1:3000/agents/:id",
+        "URL": "ws://127.0.0.1:3000/agents/trendsAgent"
+    },
+    "NewsAgent": {
+        "confURL": "ws://127.0.0.1:3001/agents/:id",
+        "URL": "ws://127.0.0.1:3001/agents/newsAgent"
+    },
+    "WeatherAgent": {
+        "confURL": "ws://127.0.0.1:3002/agents/:id",
+        "URL": "ws://127.0.0.1:3002/agents/weatherAgent"
+    },
+    "BotAgent": {
+        "confURL": "ws://127.0.0.1:3003/agents/:id",
+        "URL": "ws://127.0.0.1:3003/agents/botAgent",
+        "token": "655250735:AAHuwk7fH44FNzfliZZ2S0bVIeZ_JO1A6y4"
+    }
 }
