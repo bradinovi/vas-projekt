@@ -1,18 +1,20 @@
 const https = require('https')
 const url = require('url');
+var moment = require('moment');
+
 
 
 const getNytNews = (queryTerm) => {
     return new Promise((resolve, reject) => {
-        const today = new Date();
-
+        const today = moment().format('YYYYMMDD')
+        const yesterday = moment().subtract(1, 'days').format('YYYYMMDD')
         const requestUrl = url.parse(url.format({
             protocol: 'https',
             hostname: 'api.nytimes.com',
             pathname: '/svc/search/v2/articlesearch.json',
             query: {
-                begin_date: 20200122,
-                end_date: 20200122,
+                begin_date: yesterday,
+                end_date: today,
                 query: queryTerm,
                 "api-key": "FqZbKRbPDpjFRTS8o8V3uPv91XAVLUS0"
             }
