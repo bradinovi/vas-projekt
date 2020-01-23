@@ -15,5 +15,39 @@
         "confURL": "ws://127.0.0.1:3003/agents/:id",
         "URL": "ws://127.0.0.1:3003/agents/botAgent",
         "token": "655250735:AAHuwk7fH44FNzfliZZ2S0bVIeZ_JO1A6y4"
+    },
+    "weatherTriggers": [
+        "weather",
+        "Weather",
+        "What's the weather?",
+        "What's it like outside?",
+        "How's the weather?"
+    ],
+    "newsTriggers": [
+        "news",
+        "News",
+        "Give me the news",
+        "What's new?",
+        "Give me trending news",
+        "give me the news",
+        "what's new?",
+        "give me trending news"
+    ],
+    "wEmoji": {
+        "Thunderstorm": "🌩️⛈️",
+        "Drizzle": "☂️🌧️",
+        "Rain": "☂️🌧️🌧️",
+        "Snow": "❄️🌨️",
+        "Mist": "🌫️🌁",
+        "Smoke": "🌫️🌁",
+        "Haze": "🌫️🌁",
+        "Dust": "💨",
+        "Fog": "🌫️🌁",
+        "Sand": "⌛",
+        "Ash": "🌫️",
+        "Squall": "🌧️🌫️💨",
+        "Tornado": "🌪️",
+        "Clear": "☀️🌞",
+        "Clouds": "🌤️"
     }
 }

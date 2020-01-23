@@ -23,6 +23,7 @@ process.on('SIGINT', function () {
 
 console.log("My url:" + config.BotAgent.confURL)
 
+
 eve.system.init({
   transports: [{
     type: 'ws',
@@ -76,14 +77,15 @@ const onWeather = (ctx) => {
     lat: USERS["ID" + ctx.chat.id].location.lat,
     lon: USERS["ID" + ctx.chat.id].location.lon
   }
-
   agent.request(config.WeatherAgent.URL, { type: 'bot-get weather', data: data }).then(function (reply) {
     console.log(reply)
     ctx.reply(
-      `Weather ${reply.name}
-      Temperature: ${reply.temp}
-      ${reply.desc}`)
+      constructWeatherString(reply))
   });
+}
+
+const constructWeatherString = (data) => {
+  return `${config.wEmoji[data.title]} \n${data.name} \n${data.temp} °C \n${data.desc}`
 }
 
 const onNews = (ctx) => {
@@ -106,8 +108,8 @@ function setBotEvents() {
   bot.on('sticker', onSticker)
   bot.hears('register', onRegister)
   bot.hears('hi', onHi)
-  bot.hears('news', onNews)
-  bot.hears('weather', onWeather)
+  bot.hears(config.newsTriggers, onNews)
+  bot.hears(config.weatherTriggers, onWeather)
   bot.on('location', onLocation)
 }
 
@@ -129,19 +131,38 @@ BotAgent.prototype.initBot = function () {
   setBotEvents();
   bot.launch()
 };
-
-
-
 // BotAgent END
+
 var agent = new BotAgent('botAgent');
 agent.initBot();
-//agent.getNews();
 
 
-var newsJob = schedule.scheduleJob({ hour: 19, minute: 57 }, function () {
-  console.log('Time for tea!');
+var newsJob = schedule.scheduleJob({ hour: 9, minute: 0 }, function () {
+  Object.keys(USERS).forEach(userID => {
+    var chatID = userID.substring(2, userID.length);
+    agent.request(config.TrendsAgent.URL, { type: 'bot-get trends' }).then(function (reply) {
+      reply.forEach(article => {
+        agent.request(config.NewsAgent.URL, { type: 'bot-get news', query: article }).then(function (reply) {
+          console.log('reply: ' + reply[0]);
+          telegram.sendMessage(chatID, reply[0].headline + " " + reply[0].url);
+        });
+      });
+    });
+  });
 });
 
-var weatherJob = schedule.scheduleJob({ hour: 19, minute: 57 }, function () {
-  console.log('Time for tea!');
+var weatherJob = schedule.scheduleJob({ hour: 8, minute: 0 }, function () {
+  Object.keys(USERS).forEach(userID => {
+    var chatID = userID.substring(2, userID.length);
+    var data = {
+      lat: USERS[userID].location.lat,
+      lon: USERS[userID].location.lon
+    }
+    agent.request(config.WeatherAgent.URL, { type: 'bot-get weather', data: data }).then(function (reply) {
+      console.log(reply)
+      telegram.sendMessage(
+        constructWeatherString(reply)
+      )
+    });
+  })
 });
