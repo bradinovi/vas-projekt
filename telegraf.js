@@ -22,6 +22,11 @@ bot.hears('register', (ctx) => {
 bot.hears('hi', (ctx) => ctx.reply('Hey there'))
 bot.launch()
 
+bot.on('location', (ctx) => {
+    console.log(ctx.update.message.location)
+    ctx.reply('poslali ste lokaciju')
+})
+
 function intervalFunc() {
     users.forEach(id => {
         console.log(id)
@@ -30,4 +35,4 @@ function intervalFunc() {
     console.log('Cant stop me now!');
 }
 
-setInterval(intervalFunc, 5000);
+//setInterval(intervalFunc, 5000);

@@ -1,0 +1,8 @@
+{
+    "confUrlTrendsAgent": "ws://127.0.0.1:3000/agents/:id",
+    "urlTrendsAgent": "ws://127.0.0.1:3000/agents/trendsAgent",
+    "confUrlNewsAgent": "ws://127.0.0.1:3001/agents/:id",
+    "urlNewsAgent": "ws://127.0.0.1:3001/agents/newsAgent",
+    "confUrlWeatherAgent": "ws://127.0.0.1:3002/agents/:id",
+    "urlWeatherAgent": "ws://127.0.0.1:3002/agents/weatherAgent"
+}
