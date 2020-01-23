@@ -2,7 +2,6 @@ var eve = require('evejs');
 var schedule = require('node-schedule');
 const config = require('../config.json')
 const Telegraf = require('telegraf')
-const weather = require('../API/owm')
 const bottoken = config.BotAgent.token;
 const bot = new Telegraf(bottoken)
 const Telegram = require('telegraf/telegram')
@@ -33,11 +32,13 @@ eve.system.init({
 });
 
 const registerUser = (id) => {
-
-  USERS["ID" + id.toString()] = {
-    location: {
-      lat: 46.305744,
-      lon: 16.336607
+  const key = "ID" + id.toString();
+  if (!(key in USERS)) {
+    USERS[key] = {
+      location: {
+        lat: 46.305744,
+        lon: 16.336607
+      }
     }
   }
   console.log("User registered");
@@ -71,16 +72,18 @@ const onLocation = (ctx) => {
 
 const onWeather = (ctx) => {
   registerUser(ctx.chat.id);
-  weather.getWeatherForLocation(
-    USERS["ID" + ctx.chat.id].location.lat,
-    USERS["ID" + ctx.chat.id].location.lon,
-  ).then(data => {
-    console.log(data);
+  var data = {
+    lat: USERS["ID" + ctx.chat.id].location.lat,
+    lon: USERS["ID" + ctx.chat.id].location.lon
+  }
+
+  agent.request(config.WeatherAgent.URL, { type: 'bot-get weather', data: data }).then(function (reply) {
+    console.log(reply)
     ctx.reply(
-      `Weather ${data.name}
-      Temperature: ${data.temp}
-      ${data.desc}`)
-  })
+      `Weather ${reply.name}
+      Temperature: ${reply.temp}
+      ${reply.desc}`)
+  });
 }
 
 const onNews = (ctx) => {
