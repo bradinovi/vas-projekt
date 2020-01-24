@@ -1,8 +1,6 @@
-var eve = require('evejs');
+const eve = require('evejs');
 const config = require('../config.json')
 const weather = require('../API/owm')
-
-console.log("My url:" + config.WeatherAgent.confURL)
 
 eve.system.init({
   transports: [{
@@ -12,6 +10,14 @@ eve.system.init({
   }]
 });
 
+const getWeather = async (lat, lon) => {
+  let weatherData = await weather.getWeatherForLocation(
+    lat,
+    lon,
+  )
+  console.log(weatherData)
+  return weatherData;
+}
 
 function WeatherAgent(id) {
   eve.Agent.call(this, id);
@@ -31,12 +37,5 @@ WeatherAgent.prototype.receive = function (posiljatelj, poruka) {
 };
 
 var agent = new WeatherAgent('weatherAgent');
+console.log("My url:" + config.WeatherAgent.URL)
 
-var getWeather = async (lat, lon) => {
-  let weatherData = await weather.getWeatherForLocation(
-    lat,
-    lon,
-  )
-  console.log(weatherData)
-  return weatherData;
-}

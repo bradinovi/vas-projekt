@@ -1,7 +1,7 @@
 const https = require('https')
 const url = require('url');
 var moment = require('moment');
-
+const config = require('../config.json')
 
 
 const getNytNews = (queryTerm) => {
@@ -16,10 +16,9 @@ const getNytNews = (queryTerm) => {
                 begin_date: yesterday,
                 end_date: today,
                 query: queryTerm,
-                "api-key": "FqZbKRbPDpjFRTS8o8V3uPv91XAVLUS0"
+                "api-key": config.nyt.api_key
             }
         }));
-
         const req = https.get({
             hostname: requestUrl.hostname,
             path: requestUrl.path,
@@ -31,8 +30,6 @@ const getNytNews = (queryTerm) => {
             let articleData = [];
             res.on("end", () => {
                 body = JSON.parse(body);
-                //console.log(body)
-
                 if (body.response != undefined) {
                     if (body.response.docs != undefined) {
                         body.response.docs.forEach(a => {
@@ -46,19 +43,14 @@ const getNytNews = (queryTerm) => {
                                 url: a.web_url,
                                 image: mediaUrl
                             }
-                            //console.log(article)
                             articleData.push(article);
                         });
                     }
                 }
-                //console.log(articleData);
                 resolve(articleData);
             })
-
         })
     })
 };
 
 exports.getNews = getNytNews;
-
-//getNytNews('trump').then(data => console.log(data[0]))

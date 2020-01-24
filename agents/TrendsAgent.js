@@ -1,8 +1,6 @@
-var eve = require('evejs');
+const eve = require('evejs');
 const config = require('../config.json')
 const trends = require('../API/trends')
-
-console.log("My url:" + config.TrendsAgent.confURL)
 
 eve.system.init({
   transports: [{
@@ -11,7 +9,6 @@ eve.system.init({
     localShortcut: true,
   }]
 });
-
 
 function TrendsAgent(id) {
   eve.Agent.call(this, id);
@@ -30,6 +27,7 @@ TrendsAgent.prototype.receive = function (posiljatelj, poruka) {
 };
 
 var agent1 = new TrendsAgent('trendsAgent');
+console.log("My url:" + config.TrendsAgent.URL)
 
 var getTrends = async () => {
   var trendsData = await trends.getGoogleTrends()

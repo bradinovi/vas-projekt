@@ -1,8 +1,8 @@
-var eve = require('evejs');
+const eve = require('evejs');
 const config = require('../config.json')
 const news = require('../API/nyt-api')
 
-console.log("My url:" + config.NewsAgent.confURL)
+
 eve.system.init({
   transports: [{
     type: 'ws',
@@ -30,9 +30,9 @@ NewsAgent.prototype.receive = function (posiljatelj, poruka) {
 
 
 var agent1 = new NewsAgent('newsAgent');
+console.log("My url:" + config.NewsAgent.URL)
 
 var getNews = async (query) => {
   var newsData = await news.getNews(query)
-  console.log(newsData[0])
   return newsData;
 }

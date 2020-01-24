@@ -1,27 +1,27 @@
-var eve = require('evejs');
-var schedule = require('node-schedule');
+const eve = require('evejs');
+const schedule = require('node-schedule');
 const config = require('../config.json')
 const Telegraf = require('telegraf')
-const bottoken = config.BotAgent.token;
-const bot = new Telegraf(bottoken)
 const Telegram = require('telegraf/telegram')
-const telegram = new Telegram(bottoken, {
+const bot = new Telegraf(config.BotAgent.token)
+const fs = require('fs');
+const telegram = new Telegram(config.BotAgent.token, {
   agent: null,
   webhookReply: true
 })
 
-var fs = require('fs');
-let rawdata = fs.readFileSync('USERS.json');
+
+let rawdata = fs.readFileSync('../USERS.json');
 let USERS = JSON.parse(rawdata);
 process.on('SIGINT', function () {
-  console.log("Caught interrupt signal");
+  console.log("Exiting...");
   console.log(USERS);
-  fs.writeFile('USERS.json', JSON.stringify(USERS), 'utf8', () => {
+  fs.writeFile('../USERS.json', JSON.stringify(USERS), 'utf8', () => {
     process.exit();
   });
 });
 
-console.log("My url:" + config.BotAgent.confURL)
+
 
 
 eve.system.init({
@@ -31,6 +31,7 @@ eve.system.init({
     localShortcut: true,
   }]
 });
+
 
 const registerUser = (id) => {
   const key = "ID" + id.toString();
@@ -103,11 +104,13 @@ const onNews = (ctx) => {
 
 
 function setBotEvents() {
-  bot.start(onStart)
-  bot.help(onHelp)
+
   bot.on('sticker', onSticker)
   bot.hears('register', onRegister)
   bot.hears('hi', onHi)
+
+  bot.start(onStart)
+  bot.help(onHelp)
   bot.hears(config.newsTriggers, onNews)
   bot.hears(config.weatherTriggers, onWeather)
   bot.on('location', onLocation)
@@ -135,9 +138,9 @@ BotAgent.prototype.initBot = function () {
 
 var agent = new BotAgent('botAgent');
 agent.initBot();
+console.log("My url:" + config.BotAgent.URL)
 
-
-var newsJob = schedule.scheduleJob({ hour: 9, minute: 0 }, function () {
+const newsJob = schedule.scheduleJob({ hour: 9, minute: 0 }, function () {
   Object.keys(USERS).forEach(userID => {
     var chatID = userID.substring(2, userID.length);
     agent.request(config.TrendsAgent.URL, { type: 'bot-get trends' }).then(function (reply) {
@@ -151,7 +154,7 @@ var newsJob = schedule.scheduleJob({ hour: 9, minute: 0 }, function () {
   });
 });
 
-var weatherJob = schedule.scheduleJob({ hour: 8, minute: 0 }, function () {
+const weatherJob = schedule.scheduleJob({ hour: 8, minute: 0 }, function () {
   Object.keys(USERS).forEach(userID => {
     var chatID = userID.substring(2, userID.length);
     var data = {

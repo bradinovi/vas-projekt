@@ -49,5 +49,11 @@
         "Tornado": "🌪️",
         "Clear": "☀️🌞",
         "Clouds": "🌤️"
+    },
+    "OWM": {
+        "APPID": "8e79f2138ed57b7c248b7a0e4af1b020"
+    },
+    "nyt": {
+        "api_key": "FqZbKRbPDpjFRTS8o8V3uPv91XAVLUS0"
     }
 }

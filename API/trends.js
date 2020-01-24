@@ -1,16 +1,4 @@
-const https = require('https')
 const googleTrends = require('google-trends-api');
-
-const nytArticlesAPI = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
-const nytAPIkey = "FqZbKRbPDpjFRTS8o8V3uPv91XAVLUS0";
-
-const options = {
-    hostname: 'whatever.com',
-    port: 443,
-    path: '/todos',
-    method: 'GET'
-}
-
 
 const getGoogleTrends = () => {
     return new Promise(
@@ -25,11 +13,13 @@ const getGoogleTrends = () => {
                     } else {
                         result = JSON.parse(results);
                         let trends = [];
-                        result.default.trendingSearchesDays[0].trendingSearches.forEach(search => {
-                            //console.log(search.title);
-                            trends.push(search.title.query);
-                        });
-
+                        try {
+                            result.default.trendingSearchesDays[0].trendingSearches.forEach(search => {
+                                trends.push(search.title.query);
+                            });
+                        } catch (error) {
+                            console.log("ERROR trends")
+                        }
                         resolve(trends)
                     }
                 });
@@ -37,6 +27,3 @@ const getGoogleTrends = () => {
     );
 }
 exports.getGoogleTrends = getGoogleTrends;
-
-
-//getGoogleTrends().then(data => console.log())
