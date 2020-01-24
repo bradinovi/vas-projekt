@@ -33,6 +33,14 @@
         "what's new?",
         "give me trending news"
     ],
+    "trendsTriggers": [
+        "trending",
+        "Trending",
+        "What's trending",
+        "what's trending",
+        "What's trending?",
+        "what's trending"
+    ],
     "wEmoji": {
         "Thunderstorm": "🌩️⛈️",
         "Drizzle": "☂️🌧️",

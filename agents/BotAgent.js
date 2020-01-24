@@ -22,8 +22,6 @@ process.on('SIGINT', function () {
 });
 
 
-
-
 eve.system.init({
   transports: [{
     type: 'ws',
@@ -56,7 +54,7 @@ const onRegister = (ctx) => {
 }
 const onHelp = (ctx) => ctx.reply('Send me a sticker');
 
-const onSticker = (ctx) => ctx.reply('👍');
+const onSticker = (ctx) => ctx.reply('☺️');
 
 const onHi = (ctx) => ctx.reply('Hey there');
 
@@ -72,6 +70,10 @@ const onLocation = (ctx) => {
   ctx.reply('Your location has been updated.')
 };
 
+const constructWeatherString = (data) => {
+  return `${config.wEmoji[data.title]} \n${data.name} \n${data.temp} °C \n${data.desc}`
+}
+
 const onWeather = (ctx) => {
   registerUser(ctx.chat.id);
   var data = {
@@ -85,16 +87,12 @@ const onWeather = (ctx) => {
   });
 }
 
-const constructWeatherString = (data) => {
-  return `${config.wEmoji[data.title]} \n${data.name} \n${data.temp} °C \n${data.desc}`
-}
-
 const onNews = (ctx) => {
   registerUser(ctx.chat.id);
   console.log(config.TrendsAgent.URL);
   agent.request(config.TrendsAgent.URL, { type: 'bot-get trends' }).then(function (reply) {
-    reply.forEach(article => {
-      agent.request(config.NewsAgent.URL, { type: 'bot-get news', query: article }).then(function (reply) {
+    reply.forEach(trend => {
+      agent.request(config.NewsAgent.URL, { type: 'bot-get news', query: trend }).then(function (reply) {
         console.log('reply: ' + reply[0]);
         ctx.reply(reply[0].headline + " " + reply[0].url);
       });
@@ -102,18 +100,28 @@ const onNews = (ctx) => {
   });
 };
 
+const onTrends = (ctx) => {
+  registerUser(ctx.chat.id);
+  console.log(config.TrendsAgent.URL);
+  agent.request(config.TrendsAgent.URL, { type: 'bot-get trends' }).then(function (reply) {
+    let message = '📈 Trending now \n\n'
+    reply.forEach(trend => {
+      message += `➡️  ${trend} \n`
+    });
+    ctx.reply(message);
+  });
+};
 
-function setBotEvents() {
-
+const setBotEvents = () => {
   bot.on('sticker', onSticker)
   bot.hears('register', onRegister)
+  bot.on('location', onLocation)
   bot.hears('hi', onHi)
-
   bot.start(onStart)
   bot.help(onHelp)
   bot.hears(config.newsTriggers, onNews)
   bot.hears(config.weatherTriggers, onWeather)
-  bot.on('location', onLocation)
+  bot.hears(config.trendsTriggers, onTrends)
 }
 
 // BotAgent START
