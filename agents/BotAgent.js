@@ -1,8 +1,8 @@
 const eve = require('evejs');
 const schedule = require('node-schedule');
 const config = require('../config.json')
-const Telegraf = require('telegraf')
 const Telegram = require('telegraf/telegram')
+const Telegraf = require('telegraf')
 const bot = new Telegraf(config.BotAgent.token)
 const fs = require('fs');
 const telegram = new Telegram(config.BotAgent.token, {
@@ -133,10 +133,6 @@ function BotAgent(id) {
 
 BotAgent.prototype = Object.create(eve.Agent.prototype);
 BotAgent.prototype.constructor = BotAgent;
-
-BotAgent.prototype.receive = function (posiljatelj, poruka) {
-  console.log(posiljatelj + ': ' + JSON.stringify(poruka));
-};
 
 BotAgent.prototype.initBot = function () {
   setBotEvents();
