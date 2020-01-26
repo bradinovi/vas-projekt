@@ -3,6 +3,7 @@ const url = require('url');
 var moment = require('moment');
 const config = require('../config.json')
 
+// Data provided by The New York Times
 
 const getNytNews = (queryTerm) => {
     return new Promise((resolve, reject) => {

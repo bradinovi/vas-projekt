@@ -16,4 +16,3 @@ Agenti su nakon toga spremni za rad i moguća je komunikacija preko razgovora u 
 
 Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
 
-[comment]: <> powershell hide path: Function Prompt { "$( ( get-item $pwd ).Name )>" }
